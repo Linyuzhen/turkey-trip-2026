@@ -275,7 +275,7 @@
       touch-action: manipulation;
     }
     .filter-btn.active { background: var(--deep); color: var(--white); }
-    .filter-btn:focus-visible, .photo-credit:focus-visible, .official-link:focus-visible {
+    .filter-btn:focus-visible, .official-link:focus-visible {
       outline: 2px solid var(--copper);
       outline-offset: 2px;
     }
@@ -365,9 +365,8 @@
     .moment-photo { margin: 14px 0 2px; overflow: hidden; border: 1px solid rgba(16,42,52,.1); border-radius: 2px 22px 2px 2px; background: #e8dfd2; box-shadow: 0 12px 28px rgba(7,27,36,.09); }
     .moment-photo > a { display: block; color: inherit; text-decoration: none; }
     .moment-photo img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #ddd3c6; }
-    .moment-photo figcaption { padding: 8px 11px; color: #69797c; background: rgba(255,255,255,.82); font-size: .67rem; line-height: 1.4; }
-    .photo-credit { color: var(--teal); font-weight: 750; text-decoration: none; }
-    .photo-credit:hover { color: var(--copper); text-decoration: underline; }
+    .moment-photo[data-display="panorama"] img { aspect-ratio: 2 / 1; }
+    .moment-photo[data-display="contain"] img { object-fit: contain; background: #0a2028; }
     .freshness { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 10px; color: #7c898b; font-size: .72rem; }
     .detail-body > .freshness { margin-top: 14px; color: rgba(255,255,255,.5); }
     .freshness time { font: inherit; }
@@ -975,25 +974,25 @@
     const placeImages = new Map([
       ['Kovan Fırın Şişli Istanbul', ['https://upload.wikimedia.org/wikipedia/commons/6/64/TurkishBreakfastAtCesme.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled', 'https://commons.wikimedia.org/wiki/File:TurkishBreakfastAtCesme.jpg', 'MustafaERTAN · CC BY-SA 4.0', '土耳其早餐拼盘']],
       ['Galata Tower Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Galata_tower_01_23.jpg/1280px-Galata_tower_01_23.jpg', 'https://commons.wikimedia.org/wiki/File:Galata_tower_01_23.jpg', 'GrandEscogriffe · CC BY-SA 4.0', '伊斯坦布尔加拉塔塔']],
-      ['Ali Ocakbaşı Karaköy Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5b/Lula_kebab_2.jpg/1280px-Lula_kebab_2.jpg', 'https://commons.wikimedia.org/wiki/File:Lula_kebab_2.jpg', 'Lesya Dolyk · CC BY-SA 2.0', '炭火烤肉料理']],
+      ['Ali Ocakbaşı Karaköy Istanbul', ['https://live.staticflickr.com/1441/24490526640_b5de5eb4a5_b.jpg', 'https://www.flickr.com/photos/58123287@N00/24490526640', 'Our Awesome Planet · CC BY-NC-SA 2.0', 'Ali Ocakbaşı Karaköy 餐厅内的夜景座席', '餐厅实景', 'Flickr via Openverse']],
       ['Basilica Cistern Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ae/Cisterna_Bas%C3%ADlica%2C_Estambul%2C_Turqu%C3%ADa%2C_2024-09-28%2C_DD_58-60_HDR.jpg/1280px-Cisterna_Bas%C3%ADlica%2C_Estambul%2C_Turqu%C3%ADa%2C_2024-09-28%2C_DD_58-60_HDR.jpg', 'https://commons.wikimedia.org/wiki/File:Cisterna_Bas%C3%ADlica,_Estambul,_Turqu%C3%ADa,_2024-09-28,_DD_58-60_HDR.jpg', 'Diego Delso · CC BY-SA 4.0', '伊斯坦布尔地下水宫']],
       ['Blue Mosque Sultanahmet Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Hagia_Sophia_%28228968325%29.jpeg/1280px-Hagia_Sophia_%28228968325%29.jpeg', 'https://commons.wikimedia.org/wiki/File:Hagia_Sophia_(228968325).jpeg', 'Adli Wahid · CC BY-SA 3.0', '圣索菲亚与苏丹艾哈迈德老城天际线']],
-      ['Hocapaşa Pidecisi Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/6/69/Turkish_pide_and_meze.jpg/1280px-Turkish_pide_and_meze.jpg', 'https://commons.wikimedia.org/wiki/File:Turkish_pide_and_meze.jpg', 'E4024 · CC BY-SA 4.0', '土耳其 pide 与 meze']],
+      ['Hocapaşa Pidecisi Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/2/20/Hocapasa_Pidecisi%2C_Sucuklu_Pide_%2814285595564%29.jpg/1280px-Hocapasa_Pidecisi%2C_Sucuklu_Pide_%2814285595564%29.jpg', 'https://commons.wikimedia.org/wiki/File:Hocapasa_Pidecisi,_Sucuklu_Pide_(14285595564).jpg', 'Ryan Snyder · CC BY 2.0', 'Hocapaşa Pidecisi 的 sucuklu pide', '招牌菜实拍']],
       ['Gülhane Park Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b1/G%C3%BClhane_Park%2C_Istanbul.jpg/1280px-G%C3%BClhane_Park%2C_Istanbul.jpg', 'https://commons.wikimedia.org/wiki/File:G%C3%BClhane_Park,_Istanbul.jpg', 'Maurice Flesier · CC BY-SA 4.0', '伊斯坦布尔 Gülhane 公园']],
       ['Spice Bazaar Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/Spice_Bazaar_Istanbul_Feb_2020%2C_img_2.jpg/1280px-Spice_Bazaar_Istanbul_Feb_2020%2C_img_2.jpg', 'https://commons.wikimedia.org/wiki/File:Spice_Bazaar_Istanbul_Feb_2020,_img_2.jpg', 'Robot8A · CC BY-SA 4.0', '伊斯坦布尔香料市场']],
       ['Süleymaniye Mosque Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/S%C3%BCleymaniyeMosqueIstanbul_%28cropped%29.jpg/1280px-S%C3%BCleymaniyeMosqueIstanbul_%28cropped%29.jpg', 'https://commons.wikimedia.org/wiki/File:S%C3%BCleymaniyeMosqueIstanbul_(cropped).jpg', 'Hunanuk · CC0', '苏莱曼尼耶清真寺']],
-      ['Old Greek House Restaurant Mustafapaşa', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Town_Center_-_Mustafapa%C5%9Fa_-_Flickr_-_brewbooks.jpg/1280px-Town_Center_-_Mustafapa%C5%9Fa_-_Flickr_-_brewbooks.jpg', 'https://commons.wikimedia.org/wiki/File:Town_Center_-_Mustafapa%C5%9Fa_-_Flickr_-_brewbooks.jpg', 'brewbooks · CC BY-SA 2.0', 'Mustafapaşa 历史街区']],
-      ['Soğanlı Valley Cappadocia', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/Cappadocia_balloon_trip%2C_Ortahisar_Castle_%2811893715185%29.jpg/1280px-Cappadocia_balloon_trip%2C_Ortahisar_Castle_%2811893715185%29.jpg', 'https://commons.wikimedia.org/wiki/File:Cappadocia_balloon_trip,_Ortahisar_Castle_(11893715185).jpg', 'Arian Zwegers · CC BY 2.0', '卡帕多奇亚热气球']],
-      ['Paşabağı Cappadocia', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4b/Pa%C5%9Faba%C4%9F_Vadisi_%287%29.JPG/1280px-Pa%C5%9Faba%C4%9F_Vadisi_%287%29.JPG', 'https://commons.wikimedia.org/wiki/File:Pa%C5%9Faba%C4%9F_Vadisi_(7).JPG', 'Cobija · CC0', 'Paşabağı 精灵烟囱']],
+      ['Old Greek House Restaurant Mustafapaşa', ['https://live.staticflickr.com/1177/1468293476_b6562c4c9d_b.jpg', 'https://www.flickr.com/photos/93317998@N00/1468293476', 'Tania & Artur · CC BY-NC-ND 2.0', 'Old Greek House 夜间外观', '餐厅外观实景', 'Flickr via Openverse', 'contain']],
+      ['Soğanlı Valley Cappadocia', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/0/02/Soganli_Valley_Cappadocia.JPG/1280px-Soganli_Valley_Cappadocia.JPG', 'https://commons.wikimedia.org/wiki/File:Soganli_Valley_Cappadocia.JPG', 'Wolfgang Moroder · CC BY-SA 3.0', 'Soğanlı Valley 山谷与岩窟地貌', '活动区域全景', 'Wikimedia Commons', 'panorama']],
+      ['Paşabağı Cappadocia', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bf/Love_Valley_Panorama%2C_Pa%C5%9Faba%C4%9F%2C_Cappodocia%2C_Turkey_-_panoramio.jpg/1280px-Love_Valley_Panorama%2C_Pa%C5%9Faba%C4%9F%2C_Cappodocia%2C_Turkey_-_panoramio.jpg', 'https://commons.wikimedia.org/wiki/File:Love_Valley_Panorama,_Pa%C5%9Faba%C4%9F,_Cappodocia,_Turkey_-_panoramio.jpg', 'Adrian Farwell · CC BY 3.0', 'Paşabağı 精灵烟囱全景', '地点全景', 'Wikimedia Commons', 'panorama']],
       ['Göreme Cappadocia', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/G%C3%B6reme_town_and_valley_2015.JPG/1280px-G%C3%B6reme_town_and_valley_2015.JPG', 'https://commons.wikimedia.org/wiki/File:G%C3%B6reme_town_and_valley_2015.JPG', 'MusikAnimal · CC BY-SA 4.0', 'Göreme 小镇与山谷']],
       ['Kızılçukur Sunset Viewpoint Cappadocia', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/Red_Valleycappadocia.jpg/1280px-Red_Valleycappadocia.jpg', 'https://commons.wikimedia.org/wiki/File:Red_Valleycappadocia.jpg', 'prilfish · CC BY 2.0', '卡帕多奇亚 Red Valley']],
-      ['Topdeck Cave Restaurant Göreme', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/Sigara_B%C3%B6rek.jpg/1280px-Sigara_B%C3%B6rek.jpg', 'https://commons.wikimedia.org/wiki/File:Sigara_B%C3%B6rek.jpg', 'Garrett Ziegler · CC BY-SA 4.0', '土耳其餐桌上的 börek']],
+      ['Topdeck Cave Restaurant Göreme', ['https://live.staticflickr.com/98/229140943_f2e6e48dcf_b.jpg', 'https://www.flickr.com/photos/60594606@N00/229140943', 'Adam Franco · CC BY-NC-SA 2.0', '卡帕多奇亚洞穴餐厅的夜间用餐氛围', '晚餐环境参考', 'Flickr via Openverse']],
       ['Cappadocia Senza Restaurant Uçhisar', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/U%C3%A7hisar%2C_Cappadocia_01.jpg/1280px-U%C3%A7hisar%2C_Cappadocia_01.jpg', 'https://commons.wikimedia.org/wiki/File:U%C3%A7hisar,_Cappadocia_01.jpg', 'Bernard Gagnon · CC BY-SA 3.0', 'Uçhisar 景观']],
       ['Uçhisar Castle Cappadocia', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/U%C3%A7hisar%2C_Cappadocia_01.jpg/1280px-U%C3%A7hisar%2C_Cappadocia_01.jpg', 'https://commons.wikimedia.org/wiki/File:U%C3%A7hisar,_Cappadocia_01.jpg', 'Bernard Gagnon · CC BY-SA 3.0', 'Uçhisar 城堡']],
       ['Kabataş Ferry Pier Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Emin_Kul.jpg/1280px-Emin_Kul.jpg', 'https://commons.wikimedia.org/wiki/File:Emin_Kul.jpg', 'Ail Subway · CC BY 3.0', '伊斯坦布尔海峡渡轮']],
-      ['Üsküdar Ferry Pier Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Emin_Kul.jpg/1280px-Emin_Kul.jpg', 'https://commons.wikimedia.org/wiki/File:Emin_Kul.jpg', 'Ail Subway · CC BY 3.0', '伊斯坦布尔海峡渡轮']],
+      ['Üsküdar Ferry Pier Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/Iskele_Mosque_Uskudar.jpg/1280px-Iskele_Mosque_Uskudar.jpg', 'https://commons.wikimedia.org/wiki/File:Iskele_Mosque_Uskudar.jpg', 'Donnyhoca · CC BY 3.0', 'Üsküdar 码头、渡轮与 Mihrimah Sultan Mosque', '码头实景']],
       ['Kadıköy Market Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2f/Osmanaga%2C_Istanbul_%28LRM_20191210_184543-RR%29.jpg/1280px-Osmanaga%2C_Istanbul_%28LRM_20191210_184543-RR%29.jpg', 'https://commons.wikimedia.org/wiki/File:Osmanaga,_Istanbul_(LRM_20191210_184543-RR).jpg', 'Matti Blume · CC BY-SA 4.0', 'Kadıköy 市场街景']],
-      ['İcadiye Caddesi Kuzguncuk Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8e/Selfie_time_in_Istanbul_streets_%2816428058798%29.jpg/1280px-Selfie_time_in_Istanbul_streets_%2816428058798%29.jpg', 'https://commons.wikimedia.org/wiki/File:Selfie_time_in_Istanbul_streets_(16428058798).jpg', 'Esin Üstün · CC BY 2.0', 'Kuzguncuk 彩色街巷']],
+      ['İcadiye Caddesi Kuzguncuk Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/4/43/Kuzguncuk_2.jpg/1280px-Kuzguncuk_2.jpg', 'https://commons.wikimedia.org/wiki/File:Kuzguncuk_2.jpg', 'İhsan Deniz Kılıçoğlu · CC BY-SA 3.0', 'Kuzguncuk 彩色木屋街巷', '街区实景']],
       ['Üsküdar Coast Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/Uskudaristanbul.JPG/1280px-Uskudaristanbul.JPG', 'https://commons.wikimedia.org/wiki/File:Uskudaristanbul.JPG', 'Mansevikobora · CC BY-SA 3.0', 'Üsküdar 海岸与少女塔']],
       ['Sirkeci Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/Bahnhofsfront-Istanbul-Sirkeci_retouched.jpg/1280px-Bahnhofsfront-Istanbul-Sirkeci_retouched.jpg', 'https://commons.wikimedia.org/wiki/File:Bahnhofsfront-Istanbul-Sirkeci_retouched.jpg', 'Martin Dürrschnabel / Dha · CC BY-SA 2.5', 'Sirkeci 火车站']],
       ['Ortaköy Mosque Istanbul', ['https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d8/Istanbul_asv2020-02_img60_Ortak%C3%B6y_Mosque.jpg/1280px-Istanbul_asv2020-02_img60_Ortak%C3%B6y_Mosque.jpg', 'https://commons.wikimedia.org/wiki/File:Istanbul_asv2020-02_img60_Ortak%C3%B6y_Mosque.jpg', 'A.Savin · FAL', 'Ortaköy 清真寺与海峡']],
@@ -1003,24 +1002,23 @@
     document.querySelectorAll('.moment[data-map-query]').forEach((moment) => {
       const imageData = placeImages.get(moment.dataset.mapQuery);
       if (!imageData) return;
-      const [src, sourcePage, credit, alt] = imageData;
+      const [src, sourcePage, credit, alt, , sourceName = 'Wikimedia Commons', display = 'cover'] = imageData;
       const figure = document.createElement('figure');
       figure.className = 'moment-photo';
+      figure.dataset.display = display;
+      const source = document.createElement('a');
+      source.href = sourcePage;
+      source.target = '_blank';
+      source.rel = 'noopener noreferrer';
+      source.title = `图片来源：${credit} · ${sourceName}`;
+      source.setAttribute('aria-label', `查看图片来源：${credit} · ${sourceName}`);
       const image = document.createElement('img');
       image.src = src;
       image.alt = alt;
       image.loading = 'lazy';
       image.decoding = 'async';
-      const caption = document.createElement('figcaption');
-      caption.append('实景参考 · ');
-      const source = document.createElement('a');
-      source.className = 'photo-credit';
-      source.href = sourcePage;
-      source.target = '_blank';
-      source.rel = 'noopener noreferrer';
-      source.textContent = `${credit} · Wikimedia Commons ↗`;
-      caption.append(source);
-      figure.append(image, caption);
+      source.append(image);
+      figure.append(source);
       moment.children[1].append(figure);
     });
 
