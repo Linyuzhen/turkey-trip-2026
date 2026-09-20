@@ -985,11 +985,11 @@
     document.querySelectorAll('[data-map-query]').forEach((target) => {
       const link = document.createElement('a');
       link.className = 'map-link';
-      link.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(target.dataset.mapQuery)}`;
+      link.href = `https://uri.amap.com/search?keyword=${encodeURIComponent(target.dataset.mapQuery)}&view=map&src=turkey-trip-2026&callnative=1`;
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
-      link.textContent = '📍 Maps';
-      link.setAttribute('aria-label', `在地图中打开 ${target.dataset.mapQuery}`);
+      link.textContent = '📍 高德地图';
+      link.setAttribute('aria-label', `在高德地图中打开 ${target.dataset.mapQuery}`);
       getActionArea(target).append(link);
     });
 
